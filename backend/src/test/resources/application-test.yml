@@ -1,0 +1,30 @@
+# Test profile: in-memory H2 in PostgreSQL mode, so tests need no PostgreSQL server.
+# Every value below belongs to a throw-away test setup and is NOT a real secret.
+spring:
+  datasource:
+    url: jdbc:h2:mem:abittech_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: none   # Flyway builds the schema; validation against PostgreSQL happens at real startup
+
+app:
+  jwt:
+    secret: test-only-jwt-secret-0123456789-abcdefghijklmnopqrstuvwxyz
+    expiration-ms: 3600000
+  cors:
+    allowed-origins: http://localhost:3000
+  ai:
+    base-url: http://localhost:9
+    api-key: test-only-ai-service-key-0123456789-abcdefghijklmnop
+    connect-timeout-ms: 500
+    read-timeout-ms: 1000
+    min-seconds-between-analyses: 60
+  rate-limit:
+    enabled: true
+    auth-per-minute: 100000      # many tests register and log in; the rate-limit tests lower this
+    inquiry-per-minute: 100000
+  storage:
+    documents-dir: ${java.io.tmpdir}/abittech-test-documents
+    max-file-size-bytes: 1048576   # 1 MB so the size limit is easy to test

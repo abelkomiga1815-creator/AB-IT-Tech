@@ -1,0 +1,20 @@
+# Production profile: activate with SPRING_PROFILES_ACTIVE=prod.
+# Only the health endpoint is exposed by Actuator, and no details are shown.
+
+spring:
+  jpa:
+    show-sql: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    root: INFO
+    com.abittech.platform: INFO

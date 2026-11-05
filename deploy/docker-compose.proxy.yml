@@ -1,0 +1,34 @@
+# Production add-on: an HTTPS reverse proxy (Caddy, automatic certificates) in front of everything.
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.proxy.yml up -d --build
+# Requires Docker Compose 2.24+ (uses "!reset"). Copy deploy/Caddyfile.example to deploy/Caddyfile and
+# edit the three domain names first. NOT TESTED in the authoring environment.
+services:
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+      - corporate-website
+      - student-platform
+    restart: unless-stopped
+
+  # Only the proxy is reachable from outside: remove the localhost port mappings.
+  backend:
+    ports: !reset []
+    environment:
+      # The proxy overwrites X-Forwarded-For, so the backend may trust it for per-client rate limits.
+      FORWARD_HEADERS_STRATEGY: framework
+  corporate-website:
+    ports: !reset []
+  student-platform:
+    ports: !reset []
+
+volumes:
+  caddy_data:
+  caddy_config:

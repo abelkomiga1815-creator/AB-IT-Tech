@@ -1,0 +1,24 @@
+# Replace the three names with your real domains (DNS must point to this server).
+# Caddy obtains and renews HTTPS certificates automatically, redirects HTTP to HTTPS and sets X-Forwarded-For.
+
+abittech.example {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	reverse_proxy corporate-website:3000
+}
+
+students.abittech.example {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	reverse_proxy student-platform:3001
+}
+
+api.abittech.example {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+	# uploads go up to 10 MB (the backend enforces this too)
+	request_body {
+		max_size 12MB
+	}
+	reverse_proxy backend:8080
+}

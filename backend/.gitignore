@@ -1,0 +1,29 @@
+# Build output
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Uploaded documents (user data)
+data/
+
+# Logs and OS files
+logs/
+*.log
+.DS_Store
+Thumbs.db

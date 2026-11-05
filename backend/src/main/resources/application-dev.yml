@@ -1,0 +1,11 @@
+# Local development profile (default when no profile is selected).
+# Database credentials still come from DATABASE_URL / DATABASE_USERNAME / DATABASE_PASSWORD.
+
+logging:
+  level:
+    com.abittech.platform: DEBUG
+
+management:
+  endpoint:
+    health:
+      show-details: always   # convenient locally; production keeps details hidden
