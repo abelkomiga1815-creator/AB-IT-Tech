@@ -10,8 +10,8 @@ export const SITE_DESCRIPTION =
   "AB IT Tech Solution provides software development, web and mobile apps, cybersecurity, data analysis, UI/UX design and IT support for individuals, businesses, organizations, institutions and startups.";
 
 /** Official logo will be placed in /public by the project owner. */
-export const LOGO_SRC = "/logo-placeholder.svg";
-export const LOGO_IS_PLACEHOLDER = true;
+export const LOGO_SRC = "/ab-it-tech-solutions-logo.png";
+export const LOGO_IS_PLACEHOLDER = false;
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
