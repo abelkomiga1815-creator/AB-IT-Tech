@@ -41,6 +41,7 @@ public class ResearchService {
     private static final int MIN_TITLE_LENGTH = 3;          // the AI engine rejects shorter titles
     private static final int RESULTS_PER_SOURCE = 10;
     private static final int MAX_REPORT_CHARS = 2_000_000;
+    private static final int MAX_DESCRIPTION_CHARS = 5000;  // matches the AI service's abstract limit
 
     private final ProjectService projectService;
     private final ResearchAnalysisRepository analysisRepository;
@@ -82,12 +83,31 @@ public class ResearchService {
             enforceMinimumInterval(project.getId());
             return new ProjectSnapshot(project.getId(), project.getTitle(), project.getDescription());
         });
-        if (snapshot == null || snapshot.title().trim().length() < MIN_TITLE_LENGTH) {
+        if (snapshot == null || snapshot.title() == null || snapshot.title().trim().length() < MIN_TITLE_LENGTH) {
             throw new ApiException(ErrorCode.BAD_REQUEST,
                     "The project title needs at least " + MIN_TITLE_LENGTH + " characters before a research analysis can run");
         }
 
-        JsonNode report = aiClient.analyze(snapshot.title(), snapshot.description(), RESULTS_PER_SOURCE);
+        // Trim before sending; never silently truncate. Blank descriptions are omitted by the AI client.
+        String title = snapshot.title().trim();
+        String description = snapshot.description() == null ? null : snapshot.description().trim();
+        if (description != null && description.isEmpty()) {
+            description = null;
+        }
+        if (description != null && description.length() > MAX_DESCRIPTION_CHARS) {
+            throw new ApiException(ErrorCode.VALIDATION_ERROR,
+                    "description: exceeds the maximum length of " + MAX_DESCRIPTION_CHARS + " characters");
+        }
+
+        JsonNode report;
+        try {
+            report = aiClient.analyze(title, description, RESULTS_PER_SOURCE);
+        } catch (ApiException ex) {
+            log.warn("Research analysis rejected for projectId={} titleLength={} descriptionLength={} code={} message={}",
+                    projectId, title.length(), description == null ? 0 : description.length(),
+                    ex.getErrorCode(), ex.getMessage());
+            throw ex;
+        }
         String reportJson = serialize(report);
 
         return transactions.execute(status -> {

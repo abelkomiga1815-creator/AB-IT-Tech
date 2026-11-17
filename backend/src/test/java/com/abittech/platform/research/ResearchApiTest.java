@@ -141,6 +141,19 @@ class ResearchApiTest extends IntegrationTestBase {
     }
 
     @Test
+    void aiServiceValidationErrorIsReturnedToTheStudent() throws Exception {
+        when(aiClient.analyze(any(), any(), anyInt()))
+                .thenThrow(new ApiException(ErrorCode.VALIDATION_ERROR,
+                        "title: String should have at least 3 characters"));
+        Account student = createStudentWithProfile();
+        String projectId = createProject(student, "Crop disease detection");
+
+        send(HttpMethod.POST, base(projectId) + "/analyses", student.token(), null)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+    }
+
+    @Test
     void otherStudentsCannotRunOrReadAnalyses() throws Exception {
         when(aiClient.analyze(any(), any(), anyInt())).thenReturn(report());
         Account owner = createStudentWithProfile();

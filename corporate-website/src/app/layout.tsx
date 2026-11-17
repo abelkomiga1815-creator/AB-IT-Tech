@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { FloatingWhatsAppButton } from "@/components/FloatingWhatsAppButton";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/config/site";
 import "./globals.css";
 
@@ -27,7 +26,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Header />
         <main id="main">{children}</main>
         <Footer />
-        <FloatingWhatsAppButton />
       </body>
     </html>
   );
