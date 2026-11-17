@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+.gitleaks/
 deploy/Caddyfile
 
 # Build output and dependencies
